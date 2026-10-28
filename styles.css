@@ -400,3 +400,11 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
  .baze-editorial__pair{gap:4px;margin-bottom:4px}
  .baze-editorial__back{margin-top:40px}
 }
+
+/* Prevent wide Cyrillic hero title overlapping description on small laptops */
+@media(min-width:1051px) and (max-width:1350px){
+ .lead__layout{grid-template-columns:1fr;gap:22px}
+ .lead__layout h1{font-size:clamp(46px,5vw,69px)!important}
+ .lead__layout h1 em{white-space:normal}
+ .lead__layout p{justify-self:start;white-space:normal;max-width:720px;font-size:14px}
+}
