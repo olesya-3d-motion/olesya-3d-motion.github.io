@@ -43,7 +43,7 @@ jobs:
             id="${file_ids[$index]}"
             archive="/tmp/olesya-${index}.zip"
             echo "Downloading part $((index + 1))" | tee -a publish-report.txt
-            if ! gdown --id "$id" -O "$archive" --quiet 2> /tmp/download-error.txt; then
+            if ! gdown "$id" -O "$archive" --quiet 2> /tmp/download-error.txt; then
               echo "ERROR: Download failed for part $((index + 1))" | tee -a publish-report.txt
               head -c 4000 /tmp/download-error.txt | tee -a publish-report.txt
               exit 1
