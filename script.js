@@ -36,3 +36,6 @@ if(halo && window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-re
  document.addEventListener('pointerleave',()=>halo.classList.remove('is-active'));
  document.addEventListener('pointerover',e=>halo.classList.toggle('is-hovering',!!e.target.closest('a,button,summary')));
 }
+
+/* Contact draft: submissions are intentionally not enabled until owner supplies Formspree endpoint */
+document.addEventListener('DOMContentLoaded',()=>{const btn=document.getElementById('contactCopyButton');if(!btn)return;btn.addEventListener('click',async()=>{const form=document.getElementById('portfolioContactForm');if(!form.reportValidity())return;const data=new FormData(form),txt=`Заявка с сайта портфолио\nИмя: ${data.get('client_name')}\nEmail: ${data.get('client_email')}\nПроект: ${data.get('client_message')}`;const status=document.getElementById('contactFormStatus');try{await navigator.clipboard.writeText(txt);status.textContent='Текст заявки скопирован. Отправка на почту появится после подключения формы';}catch(e){status.textContent='Не удалось скопировать автоматически. Выделите текст полей и скопируйте вручную';}});});
