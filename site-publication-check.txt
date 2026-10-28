@@ -1,0 +1,2 @@
+GitHub Pages publication trigger.
+Portfolio v7 is stored at the repository root.
