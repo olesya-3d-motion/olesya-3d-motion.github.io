@@ -44,6 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const status = document.getElementById('contactFormStatus');
   const fallback = document.getElementById('contactEmailFallback');
   if (!form || !button || !status) return;
+  form.addEventListener('invalid', () => {
+    status.dataset.state = 'error';
+    status.textContent = 'Заполните имя, email и описание проекта — все три поля обязательны';
+  }, true);
   form.addEventListener('input', () => {
     if (status.dataset.state === 'error') {
       status.textContent = 'Проверьте данные и попробуйте отправить заявку ещё раз';
@@ -70,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     button.disabled = true;
     button.textContent = 'Отправляем…';
+    form.setAttribute('aria-busy', 'true');
     status.dataset.state = 'pending';
     status.textContent = 'Отправляем заявку. Проверяем ответ сервиса…';
 
@@ -98,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
       status.dataset.state = 'error';
       status.textContent = 'Не удалось связаться с почтовым сервисом. Напишите напрямую по ссылке ниже — текст заявки уже подготовлен';
     } finally {
+      form.removeAttribute('aria-busy');
       button.disabled = false;
       button.textContent = 'Отправить заявку ↗';
     }
