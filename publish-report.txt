@@ -1,14 +1,21 @@
 Started download
 Downloading part 1
-ERROR: Download failed for part 1
-usage: gdown [-h] [-V] [-O OUTPUT] [-q] [--proxy PROXY] [--speed SPEED]
-             [--cookies FILE] [--cookies-from-browser BROWSER] [--no-cookies]
-             [--no-check-certificate] [--continue] [--retries N] [--folder]
-             [--json] [--format FORMAT] [--user-agent USER_AGENT]
-             [--timeout SECONDS]
-             url_or_id
-gdown: error: unrecognized arguments: --id
-Download outcome: failure
+Downloaded 1: 21116370 bytes
+Downloading part 2
+Downloaded 2: 26764516 bytes
+Downloading part 3
+Downloaded 3: 28259730 bytes
+Downloading part 4
+Downloaded 4: 35057002 bytes
+Downloading part 5
+Downloaded 5: 30161988 bytes
+Downloading part 6
+Downloaded 6: 31010254 bytes
+Downloading part 7
+Downloaded 7: 25354303 bytes
+All portfolio assets copied successfully
+Publish complete
+Download outcome: success
 Install outcome: success
-Site install outcome: skipped
-Publish outcome: skipped
+Site install outcome: success
+Publish outcome: success
