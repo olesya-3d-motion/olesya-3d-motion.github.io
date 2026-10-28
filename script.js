@@ -1,0 +1,38 @@
+(() => {
+ const video=document.querySelector('#heroVideo');
+ const fallback=document.querySelector('#heroPlay');
+ if(video&&fallback){
+  video.muted=true;video.defaultMuted=true;
+  async function start(){try{await video.play();fallback.hidden=true}catch(e){fallback.hidden=false}}
+  fallback.addEventListener('click',start);
+  video.addEventListener('playing',()=>{fallback.hidden=true});
+  video.addEventListener('error',()=>{fallback.hidden=false});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!video.paused)return; if(!document.hidden)start()});
+  start();
+ }
+ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver'in window){
+  const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');observer.unobserve(e.target)}}),{threshold:.09});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+ }else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('is-visible'))}
+})();
+
+
+// Services details remain independent of the new linked portfolio galleries
+const detailButtons = document.querySelectorAll('.direction-card__details-button');
+detailButtons.forEach(button=>button.addEventListener('click',()=>{
+ const panel=document.getElementById(button.getAttribute('aria-controls'));
+ const open=button.getAttribute('aria-expanded')==='true';
+ button.setAttribute('aria-expanded',String(!open));
+ button.closest('.direction-card').classList.toggle('is-open',!open);
+ panel.hidden=open;
+ const label=button.querySelector('.more-label');if(label)label.textContent=open?'Подробнее об услугах':'Свернуть описание';
+}));
+// A subtle pink pointer halo, never intercepting clicks
+const halo=document.getElementById('cursorGlow');
+if(halo && window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches){
+ let x=-100,y=-100,raf=0;
+ const paint=()=>{halo.style.transform=`translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;raf=0};
+ document.addEventListener('pointermove',e=>{x=e.clientX;y=e.clientY;halo.classList.add('is-active');if(!raf)raf=requestAnimationFrame(paint)},{passive:true});
+ document.addEventListener('pointerleave',()=>halo.classList.remove('is-active'));
+ document.addEventListener('pointerover',e=>halo.classList.toggle('is-hovering',!!e.target.closest('a,button,summary')));
+}
