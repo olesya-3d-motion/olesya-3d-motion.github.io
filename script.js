@@ -36,3 +36,70 @@ if(halo && window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-re
  document.addEventListener('pointerleave',()=>halo.classList.remove('is-active'));
  document.addEventListener('pointerover',e=>halo.classList.toggle('is-hovering',!!e.target.closest('a,button,summary')));
 }
+
+/* Contact form — show the actual FormSubmit result without leaving this site. */
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('portfolioContactForm');
+  const button = document.getElementById('contactSubmitButton');
+  const status = document.getElementById('contactFormStatus');
+  const fallback = document.getElementById('contactEmailFallback');
+  if (!form || !button || !status) return;
+  form.addEventListener('input', () => {
+    if (status.dataset.state === 'error') {
+      status.textContent = 'Проверьте данные и попробуйте отправить заявку ещё раз';
+      status.dataset.state = '';
+    }
+  });
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!form.reportValidity()) {
+      status.textContent = 'Пожалуйста, заполните все поля и укажите корректный email';
+      status.dataset.state = 'error';
+      return;
+    }
+
+    const data = new FormData(form);
+    const draft = 'Имя: ' + (data.get('name') || '') +
+      '\nEmail: ' + (data.get('email') || '') +
+      '\n\nО проекте:\n' + (data.get('message') || '');
+    if (fallback) {
+      fallback.href = 'mailto:oleskurguzova@gmail.com?subject=' +
+        encodeURIComponent('Заявка с сайта: 2D / 3D / AI') +
+        '&body=' + encodeURIComponent(draft);
+    }
+
+    button.disabled = true;
+    button.textContent = 'Отправляем…';
+    status.dataset.state = 'pending';
+    status.textContent = 'Отправляем заявку. Проверяем ответ сервиса…';
+
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/oleskurguzova@gmail.com', {
+        method: 'POST',
+        headers: {'Accept': 'application/json'},
+        body: new URLSearchParams(data)
+      });
+      const reply = await response.json();
+      // FormSubmit can return the strings "true" and "false": never coerce them.
+      const successful = response.ok && (reply.success === true || reply.success === 'true');
+      const providerMessage = String(reply.message || '');
+      if (successful) {
+        status.dataset.state = 'success';
+        status.textContent = 'Спасибо! Сервис принял заявку. Я отвечу на указанный email';
+        form.reset();
+      } else if (/activat|confirm|подтвержд/i.test(providerMessage)) {
+        status.dataset.state = 'error';
+        status.textContent = 'Форма ожидает подтверждения почты владельцем сайта. Пока можно написать напрямую по ссылке ниже';
+      } else {
+        status.dataset.state = 'error';
+        status.textContent = 'Сервис не принял заявку. Используйте ссылку «Написать напрямую» ниже';
+      }
+    } catch (error) {
+      status.dataset.state = 'error';
+      status.textContent = 'Не удалось связаться с почтовым сервисом. Напишите напрямую по ссылке ниже — текст заявки уже подготовлен';
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Отправить заявку ↗';
+    }
+  });
+});
