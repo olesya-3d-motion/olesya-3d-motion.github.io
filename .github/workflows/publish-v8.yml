@@ -1,0 +1,61 @@
+name: Publish Olesya Portfolio v8
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/publish-v8.yml
+
+permissions:
+  contents: write
+
+jobs:
+  publish-v8:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout published v7
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install Google Drive downloader
+        run: python -m pip install --disable-pip-version-check gdown
+
+      - name: Download design and BAZE case patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'Starting v8 patch download' > v8-publish-report.txt
+          gdown "149FqwwFoYQXsayLidkAahnN1ByCPxbjA" -O "/tmp/olesya-v8-patch.zip"
+          unzip -t "/tmp/olesya-v8-patch.zip" > /dev/null
+          unzip -o -q "/tmp/olesya-v8-patch.zip" -d .
+          test -f index.html
+          test -f projects/baze/index.html
+          test -f assets/baze/beige-balance.png
+          test -f assets/baze/black-stone.png
+          test -f directions/2d/index.html
+          echo 'Patch downloaded and verified' >> v8-publish-report.txt
+
+      - name: Publish v8 update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html styles.css script.js projects/baze/index.html directions/2d/index.html assets/baze/ v8-publish-report.txt
+          if git diff --cached --quiet; then
+            echo "Files already up to date"
+          else
+            git commit -m "Publish Olesya v8: typography, motion, contact form and BAZE case"
+            git push
+          fi
+      - name: Note diagnostic on failure
+        if: failure()
+        shell: bash
+        run: |
+          echo 'v8 action failed during download, verification or commit' > v8-publish-report.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v8-publish-report.txt
+          if ! git diff --cached --quiet; then git commit -m "Record v8 deployment failure"; git push; fi
