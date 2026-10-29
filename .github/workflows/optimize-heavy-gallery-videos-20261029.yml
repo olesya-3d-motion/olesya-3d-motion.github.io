@@ -47,7 +47,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/2d/web/ assets/3d/web/ assets/ai/web/ 2>/dev/null || true
+          git add assets/2d/web/ assets/3d/web/
           if ! git diff --cached --quiet; then
             git commit -m "Add compact H264 web previews of heavy portfolio works"
             git pull --rebase origin main
