@@ -35,5 +35,7 @@ jobs:
           git add assets/ai/cartoon-t06.webp assets/ai/polaroid-t22.webp
           if ! git diff --cached --quiet; then
             git commit -m "Add exact 00:06 cartoon and 00:22 Polaroid cover frames"
+            git fetch origin main
+            git rebase origin/main
             git push
           fi
