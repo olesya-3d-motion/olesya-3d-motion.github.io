@@ -453,10 +453,13 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 .direction-card--3d .direction-card__figure{
   position:absolute;
   display:block;
-  top:-35%;
-  left:-14%;
-  width:180%;
-  height:180%;
+  top:47%;
+  left:50%;
+  width:155%;
+  height:auto;
+  max-width:none; /* override the global img,video max-width:100% */
+  max-height:none;
+  transform:translate(-50%,-50%);
   object-fit:contain;
   background:transparent;
   pointer-events:none;
@@ -471,9 +474,11 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 }
 @media(max-width:720px){
   .direction-card--3d .direction-card__figure{
-    top:-27%;
-    left:-11%;
-    width:163%;
-    height:163%;
+    top:47%;
+    left:50%;
+    width:146%;
+    height:auto;
+    max-width:none;
+    transform:translate(-50%,-50%);
   }
 }
