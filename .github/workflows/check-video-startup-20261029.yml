@@ -1,0 +1,41 @@
+name: Diagnose portfolio video startup
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/check-video-startup-20261029.yml'
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect MP4 atoms and codecs without modifying any media
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import glob,subprocess,struct,os,json
+          for f in sorted(glob.glob('assets/2d/*.mp4')+glob.glob('assets/3d/*.mp4')+glob.glob('assets/ai/*.mp4')+['assets/banner.mp4']):
+            atoms=[]
+            try:
+              with open(f,'rb') as inp:
+                while len(atoms)<12:
+                  header=inp.read(8)
+                  if len(header)<8:break
+                  n,kind=struct.unpack('>I4s',header)
+                  if n==1:
+                    n=struct.unpack('>Q',inp.read(8))[0]
+                    header_size=16
+                  else:header_size=8
+                  if n==0:n=os.path.getsize(f)-inp.tell()+header_size
+                  if n<header_size:break
+                  atoms.append(kind.decode('latin1'))
+                  inp.seek(n-header_size,1)
+              info=json.loads(subprocess.check_output(['ffprobe','-v','error','-select_streams','v:0','-show_entries','stream=codec_name,profile,width,height,pix_fmt','-of','json',f],stderr=subprocess.DEVNULL))
+              st=info.get('streams',[{}])[0]
+              print(json.dumps({'file':f,'bytes':os.path.getsize(f),'atoms':atoms[:9],'faststart':atoms.index('moov') < atoms.index('mdat') if 'moov' in atoms and 'mdat' in atoms else None,'codec':st.get('codec_name'),'profile':st.get('profile'),'size':f"{st.get('width')}x{st.get('height')}",'pix_fmt':st.get('pix_fmt')}))
+            except Exception as e: print(json.dumps({'file':f,'ERROR':str(e)}))
+          PY
