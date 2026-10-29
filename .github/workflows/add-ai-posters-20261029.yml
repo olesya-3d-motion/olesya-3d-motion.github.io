@@ -1,0 +1,39 @@
+name: Add AI covers at 06 and 22 seconds
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/add-ai-posters-20261029.yml
+
+permissions:
+  contents: write
+
+jobs:
+  publish-ai-posters:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout portfolio
+        uses: actions/checkout@v4
+      - name: Download exact selected video frames
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check gdown
+          gdown "1vnZei08MiY6DXoiZDzqV9CDBez-ksvB8" -O /tmp/ai-posters.zip
+          unzip -t /tmp/ai-posters.zip >/dev/null
+          unzip -o -q /tmp/ai-posters.zip -d .
+          test -s assets/ai/cartoon-t06.webp
+          test -s assets/ai/polaroid-t22.webp
+      - name: Save covers to repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/ai/cartoon-t06.webp assets/ai/polaroid-t22.webp
+          if ! git diff --cached --quiet; then
+            git commit -m "Add exact 00:06 cartoon and 00:22 Polaroid cover frames"
+            git push
+          fi
