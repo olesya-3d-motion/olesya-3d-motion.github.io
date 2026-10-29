@@ -1,0 +1,41 @@
+name: Build Severny Kvartal case excerpts
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-severny-case-clips.yml'
+permissions:
+  contents: write
+jobs:
+  excerpts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Prepare ffmpeg and case media
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          mkdir -p assets/severny
+          test -s assets/3d/severny-kvartal.mp4
+          ffmpeg -nostdin -hide_banner -loglevel error -y -ss 10.8 -i assets/3d/severny-kvartal.mp4 -t 4.4 -an -vf "fps=24,scale=960:-2" -c:v libx264 -preset fast -crf 25 -pix_fmt yuv420p -movflags +faststart assets/severny/house-loop.mp4
+          ffmpeg -nostdin -hide_banner -loglevel error -y -ss 29.6 -i assets/3d/severny-kvartal.mp4 -t 5.2 -an -vf "fps=24,scale=960:-2" -c:v libx264 -preset fast -crf 25 -pix_fmt yuv420p -movflags +faststart assets/severny/star-loop.mp4
+          ffmpeg -nostdin -hide_banner -loglevel error -y -ss 13 -i assets/3d/severny-kvartal.mp4 -frames:v 1 -vf "scale=960:-2" -c:v libwebp -quality 78 assets/severny/house-poster.webp
+          ffmpeg -nostdin -hide_banner -loglevel error -y -ss 32 -i assets/3d/severny-kvartal.mp4 -frames:v 1 -vf "scale=960:-2" -c:v libwebp -quality 78 assets/severny/star-poster.webp
+          for asset in assets/severny/*; do test -s "$asset"; done
+      - name: Publish case excerpts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/severny/
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish two short Severny Kvartal animation loops"
+            git pull --rebase origin main
+            git push origin main
+          fi
