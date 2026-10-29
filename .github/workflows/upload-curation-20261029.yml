@@ -1,0 +1,68 @@
+name: Upload curated portfolio media and selected poster frames
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/upload-curation-20261029.yml
+
+permissions:
+  contents: write
+
+jobs:
+  curate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout current website
+        uses: actions/checkout@v4
+      - name: Fetch user-provided media
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check gdown
+          gdown "1De75o1fxVZTuNQJKw6aaRVnnVeHxumaQ" -O /tmp/portfolio-curation.zip
+          unzip -t /tmp/portfolio-curation.zip >/dev/null
+          unzip -o -q /tmp/portfolio-curation.zip -d .
+          for asset in assets/2d/waves-cover.mp4 assets/2d/waves-cover.webp assets/3d/pillow.mp4 assets/3d/pillow.webp assets/3d/robot-render.webp; do test -s "$asset"; done
+      - name: Generate user-selected poster frames without altering original videos
+        shell: bash
+        run: |
+          set -euo pipefail
+          make_poster () {
+            local video="$1" time="$2" poster="$3"
+            test -s "$video"
+            local duration
+            duration=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$video")
+            python - "$duration" "$time" "$video" <<'PY'
+import sys
+if float(sys.argv[1]) < float(sys.argv[2]) + 0.04:
+    raise SystemExit(f"Requested {sys.argv[2]}s exceeds video duration {sys.argv[1]}s: {sys.argv[3]}")
+PY
+            ffmpeg -nostdin -hide_banner -loglevel error -y -ss "$time" -i "$video" -frames:v 1 -vf "scale='min(960,iw)':-2" -c:v libwebp -quality 82 "$poster"
+            test -s "$poster"
+          }
+          make_poster assets/2d/beach-tours.mp4 3 assets/2d/poster-beach-tours-t03.webp
+          make_poster assets/2d/portland.mp4 3 assets/2d/poster-portland-t03.webp
+          make_poster assets/2d/youtube.mp4 6 assets/2d/poster-youtube-t06.webp
+          make_poster assets/2d/animation-logo.mp4 10 assets/2d/poster-animation-logo-t10.webp
+          make_poster assets/2d/reklamny-maket.mp4 3 assets/2d/poster-reklamny-maket-t03.webp
+          make_poster assets/2d/bed-head.mp4 16 assets/2d/poster-bed-head-t16.webp
+          make_poster assets/2d/map.mp4 3 assets/2d/poster-map-t03.webp
+          make_poster assets/3d/green-interior.mp4 2 assets/3d/poster-green-interior-t02.webp
+          make_poster assets/3d/severny-kvartal.mp4 17 assets/3d/poster-severny-kvartal-t17.webp
+          make_poster assets/3d/organic-spa.mp4 9 assets/3d/poster-organic-spa-t09.webp
+          make_poster assets/3d/venera.mp4 3 assets/3d/poster-venera-t03.webp
+      - name: Commit finished media to site
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/2d/waves-cover.mp4 assets/2d/waves-cover.webp assets/3d/pillow.mp4 assets/3d/pillow.webp assets/3d/robot-render.webp
+          git add assets/2d/poster-*.webp assets/3d/poster-*.webp
+          if ! git diff --cached --quiet; then
+            git commit -m "Upload original Waves, pillow, robot and accurate gallery poster frames"
+            git pull --rebase origin main
+            git push origin main
+          fi
