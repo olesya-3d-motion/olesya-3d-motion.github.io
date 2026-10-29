@@ -771,3 +771,48 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 @media(max-width:350px){
   .lead__layout h1{font-size:clamp(21px,6.5vw,25px)!important}
 }
+
+
+/* 2026-10-29 — larger portfolio introduction and compact 3D case navigation */
+.lead__layout h1{
+  font-size:clamp(44px,4.4vw,76px)!important;
+  line-height:1.16!important;
+  letter-spacing:-.065em!important;
+  white-space:normal!important;
+  max-width:100%;
+}
+.lead__layout h1 em{white-space:nowrap!important}
+@media(min-width:800px){
+  .lead__layout p{
+    max-width:none!important;
+    width:auto;
+    white-space:nowrap!important;
+    font-size:clamp(11px,1.2vw,15px)!important;
+  }
+}
+@media(max-width:720px){
+  .lead__layout h1{
+    width:100%;
+    font-size:clamp(31px,8.5vw,44px)!important;
+    line-height:1.16!important;
+    letter-spacing:-.075em!important;
+    white-space:normal!important;
+  }
+  .lead__layout h1 em{
+    display:block!important;
+    white-space:nowrap!important;
+  }
+}
+@media(max-width:390px){
+  .lead__layout h1{font-size:clamp(28px,8.1vw,32px)!important}
+}
+@media(max-width:350px){
+  .lead__layout h1{font-size:clamp(25px,7.8vw,28px)!important}
+}
+.work-portfolio .gallery-cases .gallery-cases__intro{
+  margin:0;
+  max-width:850px;
+  font-size:clamp(15px,1.3vw,18px);
+  line-height:1.7;
+  color:var(--muted);
+}
