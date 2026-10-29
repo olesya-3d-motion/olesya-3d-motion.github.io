@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     button.textContent = 'Отправляем…';
     form.setAttribute('aria-busy', 'true');
     status.dataset.state = 'pending';
-    status.textContent = 'Отправляем заявку. Проверяем ответ сервиса…';
+    status.textContent = 'Отправляем заявку — проверяем ответ сервиса…';
 
     try {
       const response = await fetch('https://formsubmit.co/ajax/oleskurguzova@gmail.com', {
@@ -90,22 +90,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const providerMessage = String(reply.message || '');
       if (successful) {
         status.dataset.state = 'success';
-        status.textContent = 'Спасибо! Сервис принял заявку. Я отвечу на указанный email';
+        status.textContent = 'Спасибо! Заявка отправлена — отвечу на указанный email';
         form.reset();
       } else if (/activat|confirm|подтвержд/i.test(providerMessage)) {
         status.dataset.state = 'error';
-        status.textContent = 'Форма ожидает подтверждения почты владельцем сайта. Пока можно написать напрямую по ссылке ниже';
+        status.textContent = 'Форма ожидает подтверждения почты владельцем сайта — пока можно написать напрямую по ссылке ниже';
       } else {
         status.dataset.state = 'error';
-        status.textContent = 'Сервис не принял заявку. Используйте ссылку «Написать напрямую» ниже';
+        status.textContent = 'Сервис не принял заявку — используйте ссылку «Написать напрямую» ниже';
       }
     } catch (error) {
       status.dataset.state = 'error';
-      status.textContent = 'Не удалось связаться с почтовым сервисом. Напишите напрямую по ссылке ниже — текст заявки уже подготовлен';
+      status.textContent = 'Не удалось связаться с почтовым сервисом — напишите напрямую по ссылке ниже, текст заявки уже подготовлен';
     } finally {
       form.removeAttribute('aria-busy');
       button.disabled = false;
-      button.textContent = 'Отправить заявку ↗';
+      button.textContent = 'Отправить заявку ↗︎';
     }
   });
 });
