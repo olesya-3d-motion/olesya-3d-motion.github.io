@@ -624,3 +624,62 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
   .direction-card__panel{margin:14px 7px 0;padding:13px 12px}
   .directions .section-heading{margin-bottom:27px}
 }
+
+
+/* 2026-10-29 — final alignment and readable, restrained case typography */
+.lead{
+  padding-top:clamp(60px,7vw,105px);
+  padding-bottom:clamp(16px,2.1vw,28px);
+}
+.lead__layout{
+  display:flex!important;
+  flex-direction:column;
+  align-items:flex-start!important;
+  justify-content:flex-start;
+  gap:clamp(15px,1.8vw,23px)!important;
+}
+.lead__layout h1{
+  margin:0;
+  font-size:clamp(32px,3.1vw,57px)!important;
+  white-space:nowrap!important;
+}
+.lead__layout p{
+  justify-self:unset!important;
+  align-self:flex-start!important;
+  max-width:720px!important;
+  font-size:clamp(13px,1.08vw,15px)!important;
+  line-height:1.75!important;
+  white-space:normal!important;
+  padding:0!important;
+  margin:0;
+}
+.directions{padding-top:clamp(18px,2.4vw,38px)!important}
+/* Restore the single continuous card panel; keep glass only on the small numeric pills. */
+.direction-card__panel{
+  margin:21px 18px 0!important;
+  padding:15px 0 5px!important;
+  color:var(--muted)!important;
+  background:transparent!important;
+  border:0!important;
+  border-top:1px solid var(--line)!important;
+  border-radius:0!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+.direction-card__panel li{color:var(--muted)!important}
+.projects .case-card .case-card__text h3,
+.case-hero .container h1,
+.baze-editorial__intro .container h1,
+.case-chapter h2{
+  font-family:'Unbounded','Segoe UI',Arial,sans-serif!important;
+  font-weight:500!important;
+  letter-spacing:-.048em;
+}
+@media(max-width:720px){
+  .lead{padding-top:clamp(46px,8vw,66px);padding-bottom:16px}
+  .lead__layout h1{font-size:clamp(15px,4.8vw,32px)!important;letter-spacing:-.065em}
+  .lead__layout p{font-size:13px!important;max-width:100%!important}
+  .directions{padding-top:24px!important}
+  .direction-card__panel{margin:18px 13px 0!important;padding:13px 0 5px!important}
+}
