@@ -816,3 +816,14 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
   line-height:1.7;
   color:var(--muted);
 }
+
+
+/* 2026-10-29 — quieter, proportional contact headline */
+.contact h2{
+  font-size:clamp(27px,3.4vw,49px)!important;
+  line-height:1.23!important;
+  letter-spacing:-.055em!important;
+}
+@media(max-width:720px){
+  .contact h2{font-size:clamp(23px,6vw,33px)!important}
+}
