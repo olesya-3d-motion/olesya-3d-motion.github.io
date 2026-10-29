@@ -25,6 +25,8 @@ jobs:
           unzip -t /tmp/portfolio-curation.zip >/dev/null
           unzip -o -q /tmp/portfolio-curation.zip -d .
           for asset in assets/2d/waves-cover.mp4 assets/2d/waves-cover.webp assets/3d/pillow.mp4 assets/3d/pillow.webp assets/3d/robot-render.webp; do test -s "$asset"; done
+      - name: Install video frame extractor
+        run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
       - name: Generate user-selected poster frames without altering original videos
         shell: bash
         run: |
