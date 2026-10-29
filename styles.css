@@ -683,3 +683,91 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
   .directions{padding-top:24px!important}
   .direction-card__panel{margin:18px 13px 0!important;padding:13px 0 5px!important}
 }
+
+/* Mobile Safari fix — animated alpha image instead of WebM video, 2026-10-29 */
+.direction-card--3d .direction-card__figure-mobile{display:none}
+.contact-form__help:empty{display:none!important}
+.contact-form__help{overflow-wrap:anywhere;word-break:normal;min-width:0}
+.contact-form,.contact-form-wrap,.contact-form-wrap__intro,.contact-form__bottom{min-width:0}
+@media(max-width:720px){
+  /* Restore the strong, original two-line heading on phones */
+  .lead__layout h1{
+    width:100%;
+    font-size:clamp(23px,7vw,33px)!important;
+    line-height:1.28!important;
+    letter-spacing:-.06em!important;
+    white-space:normal!important;
+  }
+  .lead__layout h1 em{
+    display:block!important;
+    white-space:nowrap!important;
+  }
+  /* No Safari WebM black rectangle or overflow into the next card */
+  .direction-card--3d{
+    z-index:1;
+    overflow:hidden!important;
+  }
+  .direction-card--3d .direction-card__entry,
+  .direction-card--3d .direction-card__image{
+    overflow:hidden!important;
+  }
+  .direction-card--3d .direction-card__image{
+    background:#302d3d;
+    isolation:isolate;
+  }
+  .direction-card--3d .direction-card__figure{display:none!important}
+  .direction-card--3d .direction-card__figure-mobile{
+    position:absolute;
+    z-index:2;
+    display:block!important;
+    top:50%;
+    left:50%;
+    width:145%;
+    height:auto;
+    max-width:none;
+    object-fit:contain;
+    border-radius:0;
+    pointer-events:none;
+    transform:translate(-50%,-50%)!important;
+  }
+  .direction-card--3d:hover .direction-card__figure-mobile{
+    transform:translate(-50%,-50%)!important;
+  }
+  /* Keep form controls and all status messages inside the phone viewport */
+  .contact .container,.contact-form-wrap,.contact-form-wrap__intro,
+  .contact-form,.contact-form label,.contact-form__full,
+  .contact-form__bottom,.contact-form__help{
+    min-width:0;
+    max-width:100%;
+  }
+  .contact-form-wrap{overflow:hidden}
+  .contact-form__bottom{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    width:100%;
+    gap:15px;
+  }
+  .contact-form__button{
+    width:max-content;
+    max-width:100%;
+    align-self:flex-start;
+  }
+  .contact-form__help{
+    width:100%;
+    flex:none;
+    display:block;
+    margin:0!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    word-break:normal!important;
+  }
+  .contact-form__fallback{
+    display:block;
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+}
+@media(max-width:350px){
+  .lead__layout h1{font-size:clamp(21px,6.5vw,25px)!important}
+}
