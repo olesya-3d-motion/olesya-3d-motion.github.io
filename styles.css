@@ -934,3 +934,9 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
     margin:0 auto;
   }
 }
+
+/* Storyboard crispness filter, 2026: improve fine ink lines without scaling the illustration */
+.sk-case__concept-grid .sk-case__storyboard img{
+  filter:url(#sk-storyboard-sharpen) contrast(1.10) saturate(1.08);
+  image-rendering:-webkit-optimize-contrast;
+}
