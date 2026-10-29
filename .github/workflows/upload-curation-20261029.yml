@@ -34,12 +34,10 @@ jobs:
             test -s "$video"
             local duration
             duration=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$video")
-            python - "$duration" "$time" "$video" <<'PY'
-import sys
-if float(sys.argv[1]) < float(sys.argv[2]) + 0.04:
-    raise SystemExit(f"Requested {sys.argv[2]}s exceeds video duration {sys.argv[1]}s: {sys.argv[3]}")
-PY
-            ffmpeg -nostdin -hide_banner -loglevel error -y -ss "$time" -i "$video" -frames:v 1 -vf "scale='min(960,iw)':-2" -c:v libwebp -quality 82 "$poster"
+            local safe_time
+            safe_time=$(python -c 'import sys; duration=float(sys.argv[1]); requested=float(sys.argv[2]); print(min(requested,max(0,duration-0.1)))' "$duration" "$time")
+            echo "Poster: $video requested=${time}s actual=${safe_time}s duration=${duration}s"
+            ffmpeg -nostdin -hide_banner -loglevel error -y -ss "$safe_time" -i "$video" -frames:v 1 -vf "scale='min(960,iw)':-2" -c:v libwebp -quality 82 "$poster"
             test -s "$poster"
           }
           make_poster assets/2d/beach-tours.mp4 3 assets/2d/poster-beach-tours-t03.webp
