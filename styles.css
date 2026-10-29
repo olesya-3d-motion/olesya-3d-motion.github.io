@@ -419,3 +419,61 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 .contact-form__help[data-state="pending"]{color:#e6d6f4!important}
 .contact-form__fallback{font-size:12px;line-height:1.4;text-underline-offset:4px;text-decoration:underline;color:#f1a8d3;font-weight:600;display:inline-flex;align-items:center;max-width:100%;padding:5px 0}
 .contact-form__fallback:hover{color:#ffe4f1}
+
+
+/* 2026-10-29: original 3D sculpture escapes card border */
+.direction-card--3d{
+  position:relative;
+  z-index:2;
+  overflow:visible;
+  isolation:isolate;
+}
+.direction-card--3d .direction-card__entry,
+.direction-card--3d .direction-card__image{
+  overflow:visible;
+}
+.direction-card--3d .direction-card__image{
+  background:#302d3d;
+  isolation:isolate;
+}
+.direction-card--3d .direction-card__grain{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:15px;
+  transform:none;
+  z-index:0;
+}
+.direction-card--3d:hover .direction-card__image .direction-card__grain{
+  transform:none;
+}
+.direction-card--3d .direction-card__figure{
+  position:absolute;
+  display:block;
+  top:-24%;
+  left:-22.5%;
+  width:145%;
+  height:145%;
+  object-fit:contain;
+  background:transparent;
+  pointer-events:none;
+  z-index:2;
+}
+.direction-card--3d .direction-card__number{
+  z-index:3;
+}
+.direction-card--3d .direction-card__text{
+  position:relative;
+  z-index:1;
+}
+@media(max-width:720px){
+  .direction-card--3d .direction-card__figure{
+    top:-20%;
+    left:-18%;
+    width:136%;
+    height:136%;
+  }
+}
