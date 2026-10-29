@@ -453,10 +453,10 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 .direction-card--3d .direction-card__figure{
   position:absolute;
   display:block;
-  top:-24%;
-  left:-22.5%;
-  width:145%;
-  height:145%;
+  top:-35%;
+  left:-14%;
+  width:180%;
+  height:180%;
   object-fit:contain;
   background:transparent;
   pointer-events:none;
@@ -471,9 +471,9 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 }
 @media(max-width:720px){
   .direction-card--3d .direction-card__figure{
-    top:-20%;
-    left:-18%;
-    width:136%;
-    height:136%;
+    top:-27%;
+    left:-11%;
+    width:163%;
+    height:163%;
   }
 }
