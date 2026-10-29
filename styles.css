@@ -871,7 +871,7 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 .sk-case__section p{font-size:14px;line-height:1.82;color:var(--muted);max-width:850px}
 .sk-case__section p+p{margin-top:12px}
 .sk-case__columns{display:grid;grid-template-columns:1fr 1.3fr;gap:clamp(25px,4.5vw,70px);align-items:start}
-.sk-case__storyboard{margin:24px 0 0;border:1px solid rgba(255,255,255,.15);border-radius:15px;background:#f6f4ed;padding:12px}
+.sk-case__storyboard{max-width:720px;margin:24px auto 0;border:1px solid rgba(255,255,255,.15);border-radius:15px;background:#f6f4ed;padding:12px}
 .sk-case__storyboard img{display:block;width:100%;height:auto;border-radius:6px}
 .sk-case__storyboard figcaption{color:#666375;font-size:12px;margin:10px 4px 2px}
 .sk-case__swatches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:19px;max-width:630px}
