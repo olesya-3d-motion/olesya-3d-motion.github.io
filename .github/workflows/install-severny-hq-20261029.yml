@@ -1,0 +1,57 @@
+name: Install Severny Kvartal HQ web video
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/install-severny-hq-20261029.yml'
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Reassemble user original high-quality video and verify SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import glob,base64,hashlib,pathlib
+          files=sorted(glob.glob('assets/severny/_hq_chunks/*.b64'))
+          assert len(files)==20, f'Expected 20 chunks, got {len(files)}'
+          data=b''.join(pathlib.Path(x).read_bytes().replace(b'\n',b'') for x in files)
+          result=base64.b64decode(data,validate=True)
+          expected='aed1e02d1ed7786591dd9090ef0e9edf50392a59ef7278be8ec1097071abdbf9'
+          assert len(result)==7049366, f'Size mismatch: {len(result)}'
+          assert hashlib.sha256(result).hexdigest()==expected, 'SHA256 mismatch'
+          target=pathlib.Path('assets/severny/severny-kvartal-hq.mp4')
+          target.write_bytes(result)
+          print(f'Verified {target}: {len(result)} bytes')
+          PY
+      - name: Rebuild excerpt loops and covers from higher-quality master
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          src=assets/severny/severny-kvartal-hq.mp4
+          ffmpeg -nostdin -hide_banner -loglevel error -y -ss 10.8 -i "$src" -t 7.7 -an -vf 'fps=25,scale=960:-2' -c:v libx264 -preset fast -crf 20 -pix_fmt yuv420p -movflags +faststart assets/severny/house-loop.mp4
+          ffmpeg -nostdin -hide_banner -loglevel error -y -ss 27 -i "$src" -t 8 -an -vf 'fps=25,scale=960:-2' -c:v libx264 -preset fast -crf 20 -pix_fmt yuv420p -movflags +faststart assets/severny/star-loop.mp4
+          ffmpeg -nostdin -hide_banner -loglevel error -y -ss 13 -i "$src" -frames:v 1 -vf 'scale=960:-2' -c:v libwebp -quality 85 assets/severny/house-poster.webp
+          ffmpeg -nostdin -hide_banner -loglevel error -y -ss 32 -i "$src" -frames:v 1 -vf 'scale=960:-2' -c:v libwebp -quality 85 assets/severny/star-poster.webp
+          ffmpeg -nostdin -hide_banner -loglevel error -y -ss 34.2 -i "$src" -frames:v 1 -vf 'scale=1280:-2' -c:v libwebp -quality 87 assets/severny/final-poster.webp
+          ffprobe -v error -show_entries stream=codec_name,width,height -of default=noprint_wrappers=1 "$src"
+      - name: Publish video and clean up upload chunks
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/severny/severny-kvartal-hq.mp4 assets/severny/house-loop.mp4 assets/severny/star-loop.mp4 assets/severny/house-poster.webp assets/severny/star-poster.webp assets/severny/final-poster.webp
+          git rm -r assets/severny/_hq_chunks/
+          git commit -m 'Publish verified HQ Severny Kvartal video and refreshed clips'
+          git pull --rebase origin main
+          git push origin main
