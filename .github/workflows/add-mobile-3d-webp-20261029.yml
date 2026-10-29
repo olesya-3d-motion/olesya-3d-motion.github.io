@@ -1,0 +1,43 @@
+name: Add Safari-compatible animated transparent 3D sculpture
+
+on:
+  push:
+    paths:
+      - .github/workflows/add-mobile-3d-webp-20261029.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish-alpha-webp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout website
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download 3D WebP with alpha from portfolio Drive
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check gdown
+          gdown "1wy0ETCCipQRgIcsXEUko6wXE-oPkm7l6" -O /tmp/olesya-mobile-alpha.zip
+          unzip -t /tmp/olesya-mobile-alpha.zip >/dev/null
+          unzip -o -q /tmp/olesya-mobile-alpha.zip -d .
+          test -s assets/3d-card-figure-mobile.webp
+          du -h assets/3d-card-figure-mobile.webp
+      - name: Commit animated mobile asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/3d-card-figure-mobile.webp
+          if ! git diff --cached --quiet; then
+            git commit -m "Add transparent animated WebP for mobile Safari 3D card"
+            git fetch origin main
+            git rebase origin/main
+            git push
+          fi
