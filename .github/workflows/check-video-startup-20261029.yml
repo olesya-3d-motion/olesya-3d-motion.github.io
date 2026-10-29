@@ -12,6 +12,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      - name: Install MP4 inspector
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Inspect MP4 atoms and codecs without modifying any media
         shell: bash
         run: |
