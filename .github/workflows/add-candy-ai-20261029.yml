@@ -1,0 +1,46 @@
+name: Add 3D candy and AI portfolio works
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/add-candy-ai-20261029.yml
+
+permissions:
+  contents: write
+
+jobs:
+  add-portfolio-media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout portfolio
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download from portfolio Drive
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check gdown
+          gdown "1JkeaRLmmTUJtdf9wF5c5xRdDQEvY-bjX" -O /tmp/ai-candy-20261029.zip
+          unzip -t /tmp/ai-candy-20261029.zip >/dev/null
+          unzip -o -q /tmp/ai-candy-20261029.zip -d .
+          test -s assets/3d/candy.mp4
+          test -s assets/3d/candy.webp
+          test -s assets/3d/poster-green-interior-t033.webp
+          test -s assets/ai/cover-duo.webp
+          test -s assets/ai/cartoon.mp4
+          test -s assets/ai/polaroid.mp4
+          for n in 1 2 3 4; do test -s "assets/ai/insurance-$n.webp"; done
+      - name: Publish new media
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/3d/candy.mp4 assets/3d/candy.webp assets/3d/poster-green-interior-t033.webp assets/ai/
+          if ! git diff --cached --quiet; then
+            git commit -m "Add original AI works, candy animation and updated Cantata poster"
+            git push
+          fi
