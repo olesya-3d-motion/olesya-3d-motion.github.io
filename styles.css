@@ -827,3 +827,14 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 @media(max-width:720px){
   .contact h2{font-size:clamp(23px,6vw,33px)!important}
 }
+
+
+/* 2026-10-29: restore the numbered section eyebrow rhythm */
+.projects .section-heading .eyebrow{
+  display:block;
+  margin-bottom:14px;
+}
+.about__content > .eyebrow{
+  display:block;
+  margin-bottom:14px;
+}
