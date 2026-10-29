@@ -1,1 +1,52 @@
-(()=>{const dialog=document.getElementById('videoLightbox');const player=document.getElementById('videoLightboxPlayer');const title=document.getElementById('videoLightboxTitle');const close=document.getElementById('videoLightboxClose');if(!dialog||!player)return;document.querySelectorAll('.work-card[data-video]').forEach(card=>card.addEventListener('click',()=>{player.pause();player.src=card.dataset.video;player.poster=card.dataset.poster;title.textContent=card.dataset.title;dialog.showModal();player.load();player.play().catch(()=>{});}));close.addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{player.pause();player.removeAttribute('src');player.load()});})();
+(()=>{
+const dialog=document.getElementById('videoLightbox');
+const player=document.getElementById('videoLightboxPlayer');
+const title=document.getElementById('videoLightboxTitle');
+const close=document.getElementById('videoLightboxClose');
+if(!dialog||!player||!title||!close)return;
+const windowEl=dialog.querySelector('.video-lightbox__window')||dialog;
+const notice=document.createElement('p');
+notice.className='video-lightbox__notice';
+notice.hidden=true;
+notice.setAttribute('role','status');
+notice.textContent='Видео загружается. ';
+const link=document.createElement('a');
+link.target='_blank';
+link.rel='noopener noreferrer';
+link.textContent='Открыть видео отдельно ↗';
+notice.appendChild(link);
+windowEl.appendChild(notice);
+let stallTimer=0;
+const hideNotice=()=>{notice.hidden=true;window.clearTimeout(stallTimer);stallTimer=0;};
+const showNotice=()=>{if(dialog.open&&player.readyState<3)notice.hidden=false;};
+const scheduleNotice=()=>{
+ window.clearTimeout(stallTimer);
+ if(dialog.open&&player.readyState<3)stallTimer=window.setTimeout(showNotice,7000);
+};
+player.addEventListener('playing',hideNotice);
+player.addEventListener('canplay',hideNotice);
+player.addEventListener('waiting',scheduleNotice);
+player.addEventListener('stalled',scheduleNotice);
+player.addEventListener('error',()=>{window.clearTimeout(stallTimer);if(dialog.open){notice.firstChild.textContent='Не удалось загрузить видео. ';notice.hidden=false;}});
+document.querySelectorAll('.work-card[data-video]').forEach(card=>card.addEventListener('click',()=>{
+ player.pause();
+ hideNotice();
+ notice.firstChild.textContent='Видео загружается. ';
+ player.poster=card.dataset.poster||'';
+ player.src=card.dataset.video;
+ link.href=card.dataset.video;
+ title.textContent=card.dataset.title||'Просмотр проекта';
+ dialog.showModal();
+ player.load();
+ scheduleNotice();
+ player.play().catch(()=>{scheduleNotice();});
+}));
+close.addEventListener('click',()=>dialog.close());
+dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
+dialog.addEventListener('close',()=>{
+ hideNotice();
+ player.pause();
+ player.removeAttribute('src');
+ player.load();
+});
+})();
