@@ -1,0 +1,37 @@
+name: Repair streaming startup for Cantata interior video
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/faststart-green-interior-20261029.yml'
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Move MP4 index to the beginning, without re-encoding
+        shell: bash
+        run: |
+          set -euo pipefail
+          ffmpeg -nostdin -hide_banner -loglevel error -y -i assets/3d/green-interior.mp4 -map 0 -c copy -movflags +faststart /tmp/green-interior-faststart.mp4
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 /tmp/green-interior-faststart.mp4
+          mv /tmp/green-interior-faststart.mp4 assets/3d/green-interior.mp4
+      - name: Publish lossless MP4 update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/3d/green-interior.mp4
+          if ! git diff --cached --quiet; then
+            git commit -m "Fix initial playback of Cantata interior MP4 without re-encoding"
+            git pull --rebase origin main
+            git push origin main
+          fi
