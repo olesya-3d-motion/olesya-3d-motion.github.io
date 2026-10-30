@@ -64,6 +64,13 @@ jobs:
               }));
               data.push({width,...d});
               console.log('VIEWPORT:',JSON.stringify({width,...d}));
+              if (width === 768) {
+                const offenders=await page.evaluate(() => [...document.querySelectorAll('*')].map(el=>{
+                  const b=el.getBoundingClientRect(),c=getComputedStyle(el);
+                  return {tag:el.tagName.toLowerCase(),name:(typeof el.className==='string'?el.className:'').slice(0,75),id:el.id,right:Math.round(b.right),left:Math.round(b.left),width:Math.round(b.width),overflow:c.overflowX,position:c.position,transform:c.transform!=='none'};
+                }).filter(x=>x.right>innerWidth+2 && x.width>0 && x.left<innerWidth).sort((a,b)=>b.right-a.right).slice(0,28));
+                console.log('OFFENDERS_768:',JSON.stringify(offenders));
+              }
             }
             fs.writeFileSync('eight-widths.json',JSON.stringify(data,null,2));
             await browser.close();
