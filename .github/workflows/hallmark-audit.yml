@@ -1,0 +1,82 @@
+name: Hallmark audit (non-destructive)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/hallmark-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout portfolio
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Hallmark audit tools
+        run: |
+          git clone --depth 1 https://github.com/nutlope/hallmark.git "$RUNNER_TEMP/hallmark"
+          npm install --prefix "$RUNNER_TEMP/hallmark" --no-save puppeteer-core
+      - name: Run Hallmark static audit across site
+        shell: bash
+        run: |
+          node "$RUNNER_TEMP/hallmark/skills/hallmark/scripts/sloplint.mjs" . --json > hallmark-static.json || true
+          node -e "const d=require('./hallmark-static.json'); console.log('STATIC SUMMARY:',JSON.stringify(d.summary)); console.log('STATIC FINDINGS:',JSON.stringify(d.findings.filter(f=>f.grade==='FAIL').slice(0,15)))"
+      - name: Run Hallmark browser audit on homepage
+        shell: bash
+        run: |
+          node "$RUNNER_TEMP/hallmark/skills/hallmark/scripts/sloplint.mjs" index.html styles.css --render --json > hallmark-home-render.json || true
+          node -e "const d=require('./hallmark-home-render.json');console.log('RENDER SUMMARY:',JSON.stringify(d.summary));console.log('RENDER FINDINGS:',JSON.stringify(d.findings.filter(f=>f.grade==='FAIL' && (/render|overflow|viewport|intersect|layout|clip|contrast|action|readability|focus|broken/i.test(f.evidence+' '+f.gate))).slice(0,22)))"
+      - name: Check responsive behavior at eight widths
+        shell: bash
+        run: |
+          cat > /tmp/eight-widths.cjs <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const { pathToFileURL } = require('node:url');
+          const puppeteer = require(process.env.RUNNER_TEMP + '/hallmark/node_modules/puppeteer-core');
+          (async () => {
+            const chrome = ['/usr/bin/google-chrome','/usr/bin/google-chrome-stable','/usr/bin/chromium'].find(x=>fs.existsSync(x));
+            if (!chrome) throw Error('Chrome is missing');
+            const browser = await puppeteer.launch({headless:true,executablePath:chrome,args:['--no-sandbox']});
+            const page = await browser.newPage();
+            const widths = [320,375,414,768,1024,1280,1440,1920];
+            const data=[];
+            for (const width of widths){
+              await page.setViewport({width,height:800});
+              await page.goto(pathToFileURL(path.resolve('index.html')).href,{waitUntil:'load',timeout:30000});
+              const d=await page.evaluate(()=>({
+                innerWidth: window.innerWidth,
+                documentWidth: document.documentElement.scrollWidth,
+                overflow: document.documentElement.scrollWidth-window.innerWidth,
+                duplicateIds: [...new Set([...document.querySelectorAll('[id]')].map(e=>e.id).filter((id,_,arr)=>arr.filter(x=>x===id).length>1))],
+                heroPresent: !!document.querySelector('.hero video'),
+                mainHeadingPresent: !!document.querySelector('h1'),
+                contactFormPresent: !!document.querySelector('#portfolioContactForm'),
+                horizontalClipping: getComputedStyle(document.body).overflowX,
+              }));
+              data.push({width,...d});
+              console.log('VIEWPORT:',JSON.stringify({width,...d}));
+            }
+            fs.writeFileSync('eight-widths.json',JSON.stringify(data,null,2));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node /tmp/eight-widths.cjs
+      - name: Save audit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hallmark-reports
+          path: |
+            hallmark-static.json
+            hallmark-home-render.json
+            eight-widths.json
+          if-no-files-found: warn
