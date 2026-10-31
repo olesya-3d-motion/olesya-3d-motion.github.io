@@ -1056,3 +1056,28 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
   .projects .case-card .case-card__text p{font-size:14px;line-height:1.6}
   .projects .case-card .case-art{aspect-ratio:1.48/1}
 }
+
+/* 2026-10-31: editorial section heading refinement
+   Primary hero remains largest; four uppercase section headings share
+   the same quiet medium-weight scale. */
+.directions .section-heading h2.portfolio-heading,
+.projects .section-heading h2.projects__heading,
+.about__content h2.about__heading,
+.contact h2{
+  font-family:'Unbounded','Segoe UI',Arial,sans-serif!important;
+  font-size:clamp(30px,2.6vw,32px)!important;
+  font-weight:500!important;
+  letter-spacing:.012em!important;
+  line-height:1.36!important;
+}
+@media(max-width:720px){
+  .directions .section-heading h2.portfolio-heading,
+  .projects .section-heading h2.projects__heading,
+  .about__content h2.about__heading,
+  .contact h2{
+    font-size:clamp(24px,5.8vw,30px)!important;
+    font-weight:500!important;
+    letter-spacing:.008em!important;
+    line-height:1.37!important;
+  }
+}
