@@ -1140,8 +1140,8 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
    Preserve existing headline sizes, colours and visual design. */
 .contact__layout{
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,.98fr);
-  gap:clamp(28px,4.5vw,78px);
+  grid-template-columns:minmax(340px,400px) minmax(0,1fr);
+  gap:clamp(22px,2.5vw,38px);
   align-items:center;
 }
 .contact__intro{min-width:0}
@@ -1151,10 +1151,10 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 .contact .contact-form-wrap{
   display:block;
   width:100%;
-  max-width:590px;
+  max-width:none;
   min-width:0;
-  margin:0 0 0 auto;
-  padding:clamp(23px,3vw,40px);
+  margin:0;
+  padding:clamp(23px,2.5vw,36px);
 }
 .contact .contact-form{min-width:0}
 .baze-editorial__quote span{display:block}
@@ -1174,4 +1174,33 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 }
 @media(max-width:680px){
   .contact .contact-form-wrap{padding:22px}
+}
+
+/* 2026-11-02: readable featured-project paragraphs and compact AI gallery caption. */
+.projects .case-card .case-card__paragraphs{
+  min-width:0;
+  width:100%;
+  margin:11px 0 12px;
+}
+.projects .case-card .case-card__paragraphs p{
+  margin:0 0 8px;
+  max-width:100%;
+  font-size:clamp(13px,1.03vw,14px);
+  line-height:1.55;
+}
+.projects .case-card .case-card__paragraphs p:last-child{margin-bottom:0}
+.ai-gallery__caption{
+  padding:16px 16px 20px;
+  margin:0;
+  color:var(--text);
+  font-size:13px;
+  font-weight:800;
+  line-height:1.5;
+}
+@media(max-width:950px){
+  .contact__layout{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:720px){
+  .projects .case-card .case-card__paragraphs p{font-size:14px;line-height:1.6}
+  .ai-gallery__caption{font-size:12px;padding:12px 12px 16px}
 }
