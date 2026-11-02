@@ -1142,9 +1142,9 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
   display:grid;
   grid-template-columns:minmax(340px,400px) minmax(0,1fr);
   gap:clamp(22px,2.5vw,38px);
-  align-items:center;
+  align-items:start;
 }
-.contact__intro{min-width:0}
+.contact__intro{min-width:0;padding-top:clamp(12px,1.5vw,24px)}
 .contact__intro .eyebrow{display:block}
 .contact__intro h2{margin:23px 0!important}
 .contact__intro p{margin:0}
@@ -1170,6 +1170,7 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
 .sk-case__brief-list li::marker{color:var(--accent)}
 @media(max-width:950px){
   .contact__layout{grid-template-columns:minmax(0,1fr);gap:25px;align-items:start}
+  .contact__intro{padding-top:0}
   .contact .contact-form-wrap{max-width:100%;margin:0;padding:clamp(22px,4vw,32px)}
 }
 @media(max-width:680px){
