@@ -1134,3 +1134,44 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
   letter-spacing:.03em!important;
   line-height:1.35!important;
 }
+
+
+/* 2026-11-02 — streamlined portfolio copy and contact layout.
+   Preserve existing headline sizes, colours and visual design. */
+.contact__layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,.98fr);
+  gap:clamp(28px,4.5vw,78px);
+  align-items:center;
+}
+.contact__intro{min-width:0}
+.contact__intro .eyebrow{display:block}
+.contact__intro h2{margin:23px 0!important}
+.contact__intro p{margin:0}
+.contact .contact-form-wrap{
+  display:block;
+  width:100%;
+  max-width:590px;
+  min-width:0;
+  margin:0 0 0 auto;
+  padding:clamp(23px,3vw,40px);
+}
+.contact .contact-form{min-width:0}
+.baze-editorial__quote span{display:block}
+.sk-case__brief-list{
+  list-style:disc;
+  padding-left:21px;
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.72;
+}
+.sk-case__brief-list li{margin:2px 0}
+.sk-case__brief-list li::marker{color:var(--accent)}
+@media(max-width:950px){
+  .contact__layout{grid-template-columns:minmax(0,1fr);gap:25px;align-items:start}
+  .contact .contact-form-wrap{max-width:100%;margin:0;padding:clamp(22px,4vw,32px)}
+}
+@media(max-width:680px){
+  .contact .contact-form-wrap{padding:22px}
+}
