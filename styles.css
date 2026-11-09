@@ -1255,3 +1255,12 @@ h1,h2,h3,h4,h5,h6,.direction-card__text h3,.case-card__text h3,.gallery-intro h1
  .baze-ai-case__work h2{font-size:clamp(23px,5vw,29px)!important}
  .baze-ai-case__footer{max-width:calc(100% - 40px)}
 }
+
+/* BAZÉ editorial text alignment: pair text width to 1120px gallery, reduce long vertical column */
+.baze-editorial__story{width:100%;max-width:none;margin:48px auto 46px;padding:0;text-align:left;color:var(--muted);font-size:clamp(14px,1.16vw,16px);line-height:1.72;letter-spacing:0}
+.baze-editorial__story p{margin:0 0 20px;color:inherit;line-height:inherit}
+.baze-editorial__story strong{font-weight:700;color:var(--text)}
+@media(max-width:680px){.baze-editorial__story{font-size:14px;line-height:1.7;margin:31px auto 35px;padding:0 8px}.baze-editorial__story p{margin-bottom:18px}}
+/* New AI case: quiet editorial type instead of repeating pink BAZÉ highlights */
+.baze-ai-case__brand,.baze-ai-case__pink{color:var(--text)}
+.baze-ai-case__eyebrow{color:var(--lav)}
